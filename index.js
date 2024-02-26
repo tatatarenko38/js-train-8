@@ -10,15 +10,15 @@ function getUsersFromDatabase(array) {
   // Використовуємо метод `Array.from` для створення масиву користувачів зі списку, елементи якого це об'єкти які міститять
   // id який дорівнює id користувача,firstName який дорівнює firstName користувача в верхньому регістрі та years який дорівнює age користувача
   // Повертаємо масив користувачів
-  Array.from(
-    userRecords,
-    function (id, firstName, years) {
-      // return `${id}${this.id} ${firstName}${this.name} ${years}${this.
-      //   age}`;
-      //return id,this.id, firstName,this.name, years,this.age
-    },
-    userRecords
-  );
+
+  const users = Array.from(array, (record) => {
+    return {
+      id: record.id,
+      firstName: record.name.toUpperCase(),
+      years: record.age,
+    };
+  });
+  return users;
 }
 
 // Приклад використання функції getUsersFromDatabase
@@ -191,18 +191,19 @@ function findElementIndexes(arr, element) {
   // Додаємо перший знайдений індекс, якщо елемент знайдено
   // Додаємо останній знайдений індекс, якщо він відрізняється від першого
   // Повертаємо масив індексів
-  if (Array.isArray(arr)) {
-    const arr5 = arr.indexOf(element);
-    const arr6 = arr.lastIndexOf(element);
+  if (!Array.isArray(arr)) {
+    return [];
   }
-  let array = [];
-  if (arr.indexOf(element) >= 1) {
-    array.fill(arr.indexOf(element));
-    return array;
-  } else if (arr.indexOf(element) !== arr.lastIndexOf(element)) {
-    array.fill(arr.lastIndexOf(element));
-    return array;
+  const firstIndex = arr.indexOf(element);
+  const lastIndex = arr.lastIndexOf(element);
+  const indexes = [];
+  if (firstIndex !== -1) {
+    indexes.push(firstIndex);
   }
+  if (lastIndex !== firstIndex) {
+    indexes.push(lastIndex);
+  }
+  return indexes;
 }
 
 // Приклад використання функції findElementIndexes
@@ -293,9 +294,14 @@ function customEvery(arr, condition) {
   // якщо condition не function повертаємо false
   // Використання методу `every` для перевірки умови для кожного елементу масиву
   // Повернення результату перевірки
-  if (Array.isArray(arr)) {
-    return arr.every(condition);
+  if (!Array.isArray(arr)) {
+    return false;
   }
+  if (typeof condition !== "function") {
+    return false;
+  }
+  const result = arr.every(condition);
+  return result;
 }
 
 const numbers = [2, 4, 6, 8, 10];
@@ -375,11 +381,11 @@ function customUnshift(arr, ...elements) {
   // при кожній ітерації лічильник зменшуємо на 1 та продовжуємо поки лічильник більше, або дорівнює нулю
   // Отримуємо нову довжину масиву
   // повертаємо об'єкт {initialLength, newLength, arr }
-  if (Array.isArray(arr)){
+  if (Array.isArray(arr)) {
     let initialLength = arr.length;
-    for( let i = initialLength - 1; i >= 0;initialLength--){
+    for (let i = initialLength - 1; i >= 0; initialLength--) {
       let newLength = arr.unshift(...elements);
-      return {initialLength, newLength, arr };
+      return { initialLength, newLength, arr };
     }
   }
 }
@@ -403,10 +409,9 @@ function customSome(arr, condition) {
   // Перевіряємо, чи condition є функцією  якщо ні повертаємо false
   // Використовуємо метод `some` для перевірки умови хоча б для одного елементу масиву
   // Повертаємо результат перевірки
-  if (!Array.isArray(arr)){
- return false;
-  }
-  else{
+  if (!Array.isArray(arr)) {
+    return false;
+  } else {
     return arr.some(condition);
   }
 }
@@ -433,14 +438,19 @@ function customAt(arr, index) {
   if (!Array.isArray(arr)) {
     return undefined;
   }
-  if(index > arr.length){
+  if (index < 0 || index >= arr.length) {
     return undefined;
   }
-  let a = arr.at(index);
-  return a;   
-  // if(typeof(a) === numbers){
-  //   console.log(`Елемент є числом`)
-  // } 
+  const element = arr.at(index);
+
+  if (typeof element === "number") {
+    console.log(`Елемент є числом`);
+  } else if (typeof element === "string") {
+    console.log(`Елемент є рядком`);
+  } else if (typeof element === "object") {
+    console.log(`Елемент є обєктом`);
+  }
+  return element;
 }
 
 console.log("Завдання: 16 ==============================");
@@ -465,9 +475,14 @@ function customIncludes(arr, element) {
   // Використовуємо метод includes для перевірки наявності елемента в масиві
   // За допомогою методу filter перевіряємо скільки разів в масиві зустрічається елемент та виводимо число в консоль
   //Повертаємо результат
-  if (Array.isArray(arr)) {
-    return arr.includes(element);
+  if (!Array.isArray(arr)) {
+    console.log(`Помилка`);
+    return false;
   }
+  const result = arr.includes(element);
+  const count = arr.filter((item) => item === element).length;
+  console.log(count);
+  return result;
 }
 
 console.log("Завдання: 17 ==============================");
